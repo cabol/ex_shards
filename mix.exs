@@ -8,6 +8,7 @@ defmodule ExShards.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps(),
+     package: package(),
      description: "ExShards – Elixir Wrapper for cabol/shards"]
   end
 
@@ -18,5 +19,12 @@ defmodule ExShards.Mixfile do
   defp deps do
     [{:shards, "~> 0.4.0"},
      {:ex_doc, ">= 0.0.0", only: :dev}]
+  end
+
+  defp package do
+    [name: :ex_shards,
+     maintainers: ["Carlos A Bolanos"],
+     licenses: ["MIT"],
+     links: %{"GitHub" => "https://github.com/cabol/ex_shards"}]
   end
 end

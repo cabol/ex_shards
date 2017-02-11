@@ -18,7 +18,7 @@ To start playing with `ex_shards` you just have to follow these simple steps:
 
   ```elixir
   def deps do
-    [{:shards, "~> 0.4.0"}]
+    [{:ex_shards, "~> 0.1.0"}]
   end
   ```
 

@@ -1,6 +1,10 @@
 # Change Log
 
 ## [v0.1.0](https://github.com/cabol/ex_shards/tree/v0.1.0) (2017-02-11)
+**Implemented enhancements:**
+
+- Add some documentation to the modules [\#3](https://github.com/cabol/ex_shards/issues/3)
+
 **Closed issues:**
 
 - Implement analogous modules to `shards\_local` and `shards\_dist` [\#2](https://github.com/cabol/ex_shards/issues/2)
