@@ -18,7 +18,7 @@ To start playing with `ex_shards` you just have to follow these simple steps:
 
   ```elixir
   def deps do
-    [{:shards, "~> 0.3.0"}]
+    [{:shards, "~> 0.4.0"}]
   end
   ```
 
@@ -33,7 +33,7 @@ To start playing with `ex_shards` you just have to follow these simple steps:
 ## Build
 
     $ git clone https://github.com/cabol/ex_shards.git
-    $ cd shards
+    $ cd ex_shards
     $ mix deps.get && mix compile
 
 
@@ -46,20 +46,16 @@ Start an Elixir console:
 Once into the Elixir console:
 
 ```elixir
-> require ExShards
-nil
-
 # create a table with default options
-> ExShards.new :mytab, []
-{:mytab,
- {:state, :shards_local, 8, &:shards_local.pick/3, &:shards_local.pick/3}}
+> ExShards.new :mytab
+:mytab
 
 > ExShards.insert :mytab, [k1: 1, k2: 2, k3: 3]
 true
 
-> for k <- [:k1, :k2, :k3] do        
-  [{_, v}] = ExShards.lookup(:mytab, k)
-  v
+> for k <- [:k1, :k2, :k3] do
+[{_, v}] = ExShards.lookup(:mytab, k)
+v
 end
 [1, 2, 3]
 
@@ -69,30 +65,117 @@ true
 []
 
 # let's create another table
-> ExShards.new :mytab2, [{:n_shards, 5}]
-{:mytab2,
- {:state, :shards_local, 5, &:shards_local.pick/3, &:shards_local.pick/3}}
+> ExShards.new :mytab2, [{:n_shards, 4}]
+:mytab2
 
-# start the observer so you can see how shards looks like
+# start the observer so you can see how shards behaves
 > :observer.start
 :ok
 ```
 
 As you might have noticed, it's extremely easy, such as you were using **ETS** API directly.
 
-By default, all **ExShards** functions are mapped to use **Shards** module, but if you want to use
-**ETS** instead, you only have to do a little change in the config:
 
-```elixir
-config :ex_shards,
-  adapter: :ets
+## Distributed ExShards
+
+Let's see how **ExShards** works in distributed fashion.
+
+**1.** Let's start 3 Elixir consoles running ExShards:
+
+Node `a`:
+
+```
+$ iex --sname a@localhost -S mix
 ```
 
-Previous config, changes the adapter/module to use, from `shards` to `ets`.
+Node `b`:
+
+```
+$ iex --sname b@localhost -S mix
+```
+
+Node `c`:
+
+```
+$ iex --sname c@localhost -S mix
+```
+
+**2.** Create a table with global scope (`scope: :g`) on each node and then join them.
+
+```elixir
+> ExShards.new :mytab, scope: :g, nodes: [:b@localhost, :c@localhost]
+:mytab
+
+> ExShards.get_nodes :mytab
+[:a@localhost, :b@localhost, :c@localhost]
+```
+
+**3.** Now **ExShards** cluster is ready, let's do some basic operations:
+
+From node `a`:
+
+```elixir
+> ExShards.insert :mytab, k1: 1, k2: 2
+true
+```
+
+From node `b`:
+
+```elixir
+> ExShards.insert :mytab, k3: 3, k4: 4
+true
+```
+
+From node `c`:
+
+```elixir
+> ExShards.insert :mytab, k5: 5, k6: 6
+true
+```
+
+Now, from any of previous nodes:
+
+```elixir
+> for k <- [:k1, :k2, :k3, :k4, :k5, :k6] do
+[{_, v}] = ExShards.lookup(:mytab, k)
+v
+end
+[1, 2, 3, 4, 5, 6]
+```
+
+All nodes should return the same result.
+
+Let's do some deletions, from any node:
+
+```elixir
+> ExShards.delete :mytab, :k6
+true
+```
+
+From any node:
+
+```elixir
+> ExShards.lookup :mytab, :k6
+[]
+```
+
+Let's check again all:
+
+```elixir
+> for k <- [:k1, :k2, :k3, :k4, :k5] do
+[{_, v}] = ExShards.lookup(:mytab, k)
+v
+end
+[1, 2, 3, 4, 5]
+```
+
+
+## References
 
 For more information about `shards` you can go to these links:
 
  * [shards](https://github.com/cabol/shards): Original Erlang project.
+ * [API Reference](http://cabol.github.io/shards): Shards API Reference.
  * [Blog Post about Shards](http://cabol.github.io/posts/2016/04/14/sharding-support-for-ets.html).
 
 

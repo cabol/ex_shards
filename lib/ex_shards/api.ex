@@ -1,8 +1,9 @@
 defmodule ExShards.API do
   @moduledoc """
-  This allows to generate API functions.
+  This module allows to generate API functions.
   """
 
+  @doc false
   defmacro __using__(_opts) do
     quote do
       @before_compile unquote(__MODULE__)
@@ -10,6 +11,7 @@ defmodule ExShards.API do
     end
   end
 
+  @doc false
   defmacro __before_compile__(_env) do
     quote do
       @public_defs Module.definitions_in(__MODULE__, :def)
@@ -21,11 +23,10 @@ defmodule ExShards.API do
   @doc false
   defmacro defapi(mod, opts \\ []) do
     # build public function list
-    exclude_defaults = [:module_info]
     public_defs = opts
     |> Keyword.get(:exclude, [])
     |> :lists.merge(Keyword.get(opts, :exclude_all, []))
-    |> :lists.append(exclude_defaults)
+    |> :lists.append([:module_info])
     |> Enum.reduce(mod.module_info(:exports), fn
       ({k, v}, acc) -> Keyword.delete(acc, k, v)
       (k, acc)      -> Keyword.delete(acc, k)
