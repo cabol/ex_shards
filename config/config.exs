@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure for your application as:
 #
-#     config :exshards, key: :value
+#     config :ex_shards, key: :value
 #
 # And access this configuration in your application as:
 #
-#     Application.get_env(:exshards, :key)
+#     Application.get_env(:ex_shards, :key)
 #
 # Or configure a 3rd-party app:
 #
@@ -28,6 +28,3 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
-
-config :exshards,
-  adapter: :shards

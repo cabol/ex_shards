@@ -2,12 +2,13 @@ defmodule ExShards.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :exshards,
-     version: "0.0.1",
+    [app: :ex_shards,
+     version: "0.1.0",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     deps: deps(),
+     description: "ExShards – Elixir Wrapper for cabol/shards"]
   end
 
   def application do
@@ -15,6 +16,7 @@ defmodule ExShards.Mixfile do
   end
 
   defp deps do
-    [{:shards, "~> 0.3.0"}]
+    [{:shards, "~> 0.4.0"},
+     {:ex_doc, ">= 0.0.0", only: :dev}]
   end
 end

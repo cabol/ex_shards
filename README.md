@@ -12,9 +12,9 @@ Taking advantage of this, what **ExShards** does is provides a wrapper to use ei
 
 ## Installation and Usage
 
-To start playing with `exshards` you just have to follow these simple steps:
+To start playing with `ex_shards` you just have to follow these simple steps:
 
-  1. Add exshards to your list of dependencies in `mix.exs`:
+  1. Add ex_shards to your list of dependencies in `mix.exs`:
 
   ```elixir
   def deps do
@@ -22,7 +22,7 @@ To start playing with `exshards` you just have to follow these simple steps:
   end
   ```
 
-  2. Because `exshards` uses `shards`, make sure that `shards` is started before your application:
+  2. Because `ex_shards` uses `shards`, make sure that `shards` is started before your application:
 
   ```elixir
   def application do
@@ -32,7 +32,7 @@ To start playing with `exshards` you just have to follow these simple steps:
 
 ## Build
 
-    $ git clone https://github.com/cabol/exshards.git
+    $ git clone https://github.com/cabol/ex_shards.git
     $ cd shards
     $ mix deps.get && mix compile
 
@@ -84,7 +84,7 @@ By default, all **ExShards** functions are mapped to use **Shards** module, but 
 **ETS** instead, you only have to do a little change in the config:
 
 ```elixir
-config :exshards,
+config :ex_shards,
   adapter: :ets
 ```
 
