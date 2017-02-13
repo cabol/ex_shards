@@ -1,5 +1,17 @@
 # Change Log
 
+## [v0.2.0](https://github.com/cabol/ex_shards/tree/v0.2.0) (2017-02-13)
+[Full Changelog](https://github.com/cabol/ex_shards/compare/v0.1.0...v0.2.0)
+
+**Implemented enhancements:**
+
+- Implement an extended API to provide more friendly functions [\#4](https://github.com/cabol/ex_shards/issues/4)
+
+**Closed issues:**
+
+- Refactor some modules to better project organization [\#5](https://github.com/cabol/ex_shards/issues/5)
+- Has this ever been published to hex? [\#1](https://github.com/cabol/ex_shards/issues/1)
+
 ## [v0.1.0](https://github.com/cabol/ex_shards/tree/v0.1.0) (2017-02-11)
 **Implemented enhancements:**
 

@@ -28,7 +28,7 @@ defmodule ExShards.State do
   @type range :: integer
   @type pick_fun :: (key, range, op -> integer | :any)
 
-  @n_shards System.schedulers_online()
+  @n_shards :erlang.system_info(:schedulers_online)
 
   Record.defrecord :state, [
     module: :shards_local,
