@@ -17,7 +17,8 @@ defmodule ExShards.Mixfile do
   end
 
   defp deps do
-    [{:shards, "~> 0.4.0"},
+    [{:shards, "~> 0.4"},
+     {:ex2ms, "~> 1.4"},
      {:ex_doc, ">= 0.0.0", only: :dev}]
   end
 

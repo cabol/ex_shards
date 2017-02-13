@@ -18,11 +18,11 @@ To start playing with `ex_shards` you just have to follow these simple steps:
 
   ```elixir
   def deps do
-    [{:ex_shards, "~> 0.1.0"}]
+    [{:ex_shards, "~> 0.1"}]
   end
   ```
 
-  2. Because `ex_shards` uses `shards`, make sure that `shards` is started before your application:
+  2. Since `ex_shards` uses `shards`, make sure that `shards` is started before your application:
 
   ```elixir
   def application do
@@ -59,6 +59,14 @@ v
 end
 [1, 2, 3]
 
+# let's query all values using select
+# we need to require Ex2ms to build match specs
+> require Ex2ms
+> ms = Ex2ms.fun do {_, v} -> v end
+[{{:_, :"$1"}, [], [:"$1"]}]
+> ExShards.select :mytab, ms
+[1, 2, 3]
+
 > ExShards.delete :mytab, :k3
 true
 > ExShards.lookup :mytab, :k3
@@ -74,6 +82,10 @@ true
 ```
 
 As you might have noticed, it's extremely easy, such as you were using **ETS** API directly.
+
+
+## Extended API
+
 
 
 ## Distributed ExShards

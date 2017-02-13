@@ -1,9 +1,28 @@
 defmodule ExShardsTest do
   use ExUnit.Case
-  doctest ExShards
+
+  @exclude_list [
+    new: 1,
+    drop: 2, drop: 3,
+    fetch: 2, fetch: 3,
+    fetch!: 2, fetch!: 3,
+    get: 2, get: 3, get: 4,
+    get_and_update: 3, get_and_update: 4,
+    get_and_update!: 3, get_and_update!: 4,
+    has_key?: 2, has_key?: 3,
+    keys: 1, keys: 2,
+    pop: 2, pop: 3, pop: 4,
+    put: 3, put: 4,
+    put_new: 3, put_new: 4,
+    remove: 2, remove: 3,
+    set: 2, set: 3,
+    update: 4, update: 5,
+    update!: 3, update!: 4,
+    update_elem: 3, update_elem: 4,
+    values: 1, values: 2]
 
   test "shards api" do
-    ex_shards = ExShards.definitions
+    ex_shards = ExShards.definitions -- @exclude_list
     shards = :exports
     |> :shards.module_info
     |> Keyword.drop([:module_info, :start, :stop])
@@ -12,7 +31,7 @@ defmodule ExShardsTest do
   end
 
   test "shards_local api" do
-    local = ExShards.Local.definitions
+    local = ExShards.Local.definitions -- @exclude_list
     shards_local = :exports
     |> :shards_local.module_info
     |> Keyword.drop([:module_info])
@@ -21,7 +40,7 @@ defmodule ExShardsTest do
   end
 
   test "shards_dist api" do
-    dist = ExShards.Dist.definitions
+    dist = ExShards.Dist.definitions -- @exclude_list
     shards_dist = :exports
     |> :shards_dist.module_info
     |> Keyword.drop([:module_info])

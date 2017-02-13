@@ -20,7 +20,33 @@ defmodule ExShards.State do
 
   use ExShards.API
 
-  defapi :shards_state, exclude: [module: 2, n_shards: 2, pick_shard_fun: 2, pick_node_fun: 2]
+  require Record
+
+  @type op :: :r | :w | :d
+  @type key :: term
+  @type range :: integer
+  @type pick_fun :: (key, range, op -> integer | :any)
+
+  @n_shards System.schedulers_online()
+
+  Record.defrecord :state, [
+    module: :shards_local,
+    n_shards: @n_shards,
+    pick_shard_fun: &:shards_local.pick/3,
+    pick_node_fun: &:shards_local.pick/3]
+
+  @type t :: record(:state, [
+    module: module,
+    n_shards: integer,
+    pick_shard_fun: pick_fun,
+    pick_node_fun: pick_fun])
+
+  construct :shards_state,
+    exclude: [
+      module: 2,
+      n_shards: 2,
+      pick_shard_fun: 2,
+      pick_node_fun: 2]
 
   @doc false
   def module(state, module) do

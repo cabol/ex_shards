@@ -1,12 +1,13 @@
 defmodule ExShards.API do
   @moduledoc """
-  This module allows to generate API functions.
+  This module allows to construct API functions.
   """
 
   @doc false
   defmacro __using__(_opts) do
     quote do
       @before_compile unquote(__MODULE__)
+
       import unquote(__MODULE__)
     end
   end
@@ -21,7 +22,7 @@ defmodule ExShards.API do
   end
 
   @doc false
-  defmacro defapi(mod, opts \\ []) do
+  defmacro construct(mod, opts \\ []) do
     # build public function list
     public_defs = opts
     |> Keyword.get(:exclude, [])

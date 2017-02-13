@@ -33,8 +33,9 @@ defmodule ExShards.Local do
   """
 
   use ExShards.API
+  use ExShards.API.Ext
 
-  defapi :shards_local, exclude: [new: 2]
+  construct :shards_local, exclude: [new: 2]
 
-  def new(tab, opts \\ []), do: :shards.new(tab, opts)
+  def new(tab, opts \\ []), do: :shards_local.new(tab, opts)
 end

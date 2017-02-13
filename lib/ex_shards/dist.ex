@@ -83,8 +83,9 @@ defmodule ExShards.Dist do
   """
 
   use ExShards.API
+  #use ExShards.API.Ext
 
-  defapi :shards_dist, exclude: [new: 2]
+  construct :shards_dist, exclude: [new: 2]
 
-  def new(tab, opts \\ []), do: :shards.new(tab, opts)
+  def new(tab, opts \\ []), do: :shards_dist.new(tab, opts)
 end
