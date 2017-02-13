@@ -9,6 +9,8 @@ This is a wrapper on top of [ETS](http://erlang.org/doc/man/ets.html) and [Shard
 Taking advantage of this, what **ExShards** does is provides a wrapper to use either `ets` or
 `shards` totally transparent.
 
+Additionally, `ExShards` provides an extended API, with a fresh and fluent interface – more Elixir-friendly.
+For more information, check out the [<i class="icon-upload"></i> Extended API](#extended-api) section.
 
 ## Installation and Usage
 
@@ -47,37 +49,38 @@ Once into the Elixir console:
 
 ```elixir
 # create a table with default options
-> ExShards.new :mytab
+iex> ExShards.new :mytab
 :mytab
 
-> ExShards.insert :mytab, [k1: 1, k2: 2, k3: 3]
+iex> ExShards.insert :mytab, [k1: 1, k2: 2, k3: 3]
 true
 
-> for k <- [:k1, :k2, :k3] do
-[{_, v}] = ExShards.lookup(:mytab, k)
-v
-end
+iex> for k <- [:k1, :k2, :k3] do
+       [{_, v}] = ExShards.lookup(:mytab, k)
+       v
+     end
 [1, 2, 3]
 
 # let's query all values using select
 # we need to require Ex2ms to build match specs
-> require Ex2ms
-> ms = Ex2ms.fun do {_, v} -> v end
+iex> require Ex2ms
+Ex2ms
+iex> ms = Ex2ms.fun do {_, v} -> v end
 [{{:_, :"$1"}, [], [:"$1"]}]
-> ExShards.select :mytab, ms
+iex> ExShards.select :mytab, ms
 [1, 2, 3]
 
-> ExShards.delete :mytab, :k3
+iex> ExShards.delete :mytab, :k3
 true
-> ExShards.lookup :mytab, :k3
+iex> ExShards.lookup :mytab, :k3
 []
 
 # let's create another table
-> ExShards.new :mytab2, [{:n_shards, 4}]
+iex> ExShards.new :mytab2, [{:n_shards, 4}]
 :mytab2
 
 # start the observer so you can see how shards behaves
-> :observer.start
+iex> :observer.start
 :ok
 ```
 
@@ -86,7 +89,36 @@ As you might have noticed, it's extremely easy, such as you were using **ETS** A
 
 ## Extended API
 
+As you probably have noticed, most of the Elixir APIs are designed to be [Fluent](https://en.wikipedia.org/wiki/Fluent_interface),
+they allow us to take advantage of the pipe operator, making the code more readable
+and elegant of course.
 
+Because `shards` implements the same `ets` API, most of the functions follows
+the old-traditional Erlang-style, so it is not possible to pipe them. Here is
+where the extended API comes in!
+
+[ExShards.Ext](lib/ex_shards/ext.ex) is the module that implements the extended API,
+and provides a fluent API with a set of nicer and fresh functions, based on the
+`Elixir.Map` API. No more words, let's play a bit:
+
+```elixir
+iex> :t |> ExShards.new |> ExShards.set(a: 1, b: 2) |> ExShards.put(:c, 3) |> ExShards.update!(:a, &(&1 * 2))
+:t
+
+iex> for k <- [:a, :b, :c, :d], do: ExShards.get(:t, k)
+[2, 2, 3, nil]
+
+iex> :t |> ExShards.remove(:c) |> ExShards.fetch!(:c)
+** (KeyError) key :c not found in: :t
+
+iex> :t |> ExShards.drop([:a, :b, :x]) |> ExShards.put(:y, "new!") |> ExShards.keys
+[:y]
+```
+
+`ExShards.Ext` is well documented, and you can find the documentation in the next links:
+
+ * [ExShards.Ext](https://hexdocs.pm/ex_shards/ExShards.Ext.html)
+ * [API Reference](https://hexdocs.pm/ex_shards/api-reference.html)
 
 ## Distributed ExShards
 
@@ -115,10 +147,10 @@ $ iex --sname c@localhost -S mix
 **2.** Create a table with global scope (`scope: :g`) on each node and then join them.
 
 ```elixir
-> ExShards.new :mytab, scope: :g, nodes: [:b@localhost, :c@localhost]
+iex> ExShards.new :mytab, scope: :g, nodes: [:b@localhost, :c@localhost]
 :mytab
 
-> ExShards.get_nodes :mytab
+iex> ExShards.get_nodes :mytab
 [:a@localhost, :b@localhost, :c@localhost]
 ```
 
@@ -127,31 +159,31 @@ $ iex --sname c@localhost -S mix
 From node `a`:
 
 ```elixir
-> ExShards.insert :mytab, k1: 1, k2: 2
+iex> ExShards.insert :mytab, k1: 1, k2: 2
 true
 ```
 
 From node `b`:
 
 ```elixir
-> ExShards.insert :mytab, k3: 3, k4: 4
+iex> ExShards.insert :mytab, k3: 3, k4: 4
 true
 ```
 
 From node `c`:
 
 ```elixir
-> ExShards.insert :mytab, k5: 5, k6: 6
+iex> ExShards.insert :mytab, k5: 5, k6: 6
 true
 ```
 
 Now, from any of previous nodes:
 
 ```elixir
-> for k <- [:k1, :k2, :k3, :k4, :k5, :k6] do
-[{_, v}] = ExShards.lookup(:mytab, k)
-v
-end
+iex> for k <- [:k1, :k2, :k3, :k4, :k5, :k6] do
+       [{_, v}] = ExShards.lookup(:mytab, k)
+       v
+     end
 [1, 2, 3, 4, 5, 6]
 ```
 
@@ -160,34 +192,33 @@ All nodes should return the same result.
 Let's do some deletions, from any node:
 
 ```elixir
-> ExShards.delete :mytab, :k6
+iex> ExShards.delete :mytab, :k6
 true
 ```
 
 From any node:
 
 ```elixir
-> ExShards.lookup :mytab, :k6
+iex> ExShards.lookup :mytab, :k6
 []
 ```
 
 Let's check again all:
 
 ```elixir
-> for k <- [:k1, :k2, :k3, :k4, :k5] do
-[{_, v}] = ExShards.lookup(:mytab, k)
-v
-end
+iex> for k <- [:k1, :k2, :k3, :k4, :k5] do
+       [{_, v}] = ExShards.lookup(:mytab, k)
+       v
+     end
 [1, 2, 3, 4, 5]
 ```
 
 
 ## References
 
-For more information about `shards` you can go to these links:
-
- * [shards](https://github.com/cabol/shards): Original Erlang project.
- * [API Reference](http://cabol.github.io/shards): Shards API Reference.
+ * [ExShards API Reference](https://hexdocs.pm/ex_shards/api-reference.html): ExShards Docs.
+ * [Shards](https://github.com/cabol/shards): Original Erlang project.
+ * [Shards API Reference](http://cabol.github.io/shards): Shards API Reference.
  * [Blog Post about Shards](http://cabol.github.io/posts/2016/04/14/sharding-support-for-ets.html).
 
 

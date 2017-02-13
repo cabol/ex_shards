@@ -25,32 +25,32 @@ defmodule ExShards.Dist do
 
   **2.** Create a table with global scope (`scope: :g`) on each node and then join them.
 
-      > ExShards.new :mytab, scope: :g, nodes: [:b@localhost, :c@localhost]
+      iex> ExShards.new :mytab, scope: :g, nodes: [:b@localhost, :c@localhost]
       :mytab
 
-      > ExShards.get_nodes :mytab
+      iex> ExShards.get_nodes :mytab
       [:a@localhost, :b@localhost, :c@localhost]
 
   **3.** Now **ExShards** cluster is ready, let's do some basic operations:
 
   From node `a`:
 
-      > ExShards.insert :mytab, k1: 1, k2: 2
+      iex> ExShards.insert :mytab, k1: 1, k2: 2
       true
 
   From node `b`:
 
-      > ExShards.insert :mytab, k3: 3, k4: 4
+      iex> ExShards.insert :mytab, k3: 3, k4: 4
       true
 
   From node `c`:
 
-      > ExShards.insert :mytab, k5: 5, k6: 6
+      iex> ExShards.insert :mytab, k5: 5, k6: 6
       true
 
   Now, from any of previous nodes:
 
-      > for k <- [:k1, :k2, :k3, :k4, :k5, :k6] do
+      iex> for k <- [:k1, :k2, :k3, :k4, :k5, :k6] do
       [{_, v}] = ExShards.lookup(:mytab, k)
       v
       end
@@ -60,17 +60,17 @@ defmodule ExShards.Dist do
 
   Let's do some deletions, from any node:
 
-      > ExShards.delete :mytab, :k6
+      iex> ExShards.delete :mytab, :k6
       true
 
   From any node:
 
-      > ExShards.lookup :mytab, :k6
+      iex> ExShards.lookup :mytab, :k6
       []
 
   Let's check again all:
 
-      > for k <- [:k1, :k2, :k3, :k4, :k5] do
+      iex> for k <- [:k1, :k2, :k3, :k4, :k5] do
       [{_, v}] = ExShards.lookup(:mytab, k)
       v
       end
@@ -80,12 +80,14 @@ defmodule ExShards.Dist do
 
     * [shards_dist](https://github.com/cabol/shards/blob/master/src/shards_dist.erl)
     * [API Reference](http://cabol.github.io/shards)
+    * `ExShards.Ext` – Extended API
   """
 
-  use ExShards.API
-  #use ExShards.API.Ext
+  use ExShards.Construct
+  use ExShards.Ext
 
-  construct :shards_dist, exclude: [new: 2]
+  inject :shards_dist, except: [new: 2]
 
+  @doc false
   def new(tab, opts \\ []), do: :shards_dist.new(tab, opts)
 end

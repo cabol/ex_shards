@@ -1,7 +1,35 @@
 defmodule ExShards.API.ExtTest do
   use ExUnit.Case
 
-  @modules [{ExShards, []}, {ExShards.Local, []}]
+  @modules [{ExShards.Local, []}, {ExShards.Dist, [scope: :g]}, {ExShards, []}]
+
+  test "drop" do
+    for {mod, args} <- @modules do
+      :t |> mod.new(args) |> mod.set(a: 1, b: 2, c: 3)
+      assert mod.drop(:t, [:a, :b, :d]) |> mod.keys == [:c]
+      assert mod.get(:t, :a) == nil
+      assert mod.get(:t, :b) == nil
+      assert mod.get(:t, :c) == 3
+      assert mod.drop(:t, [:c]) |> mod.keys == []
+      assert mod.get(:t, :c) == nil
+      assert mod.drop(:t, [:d]) |> mod.keys == []
+      assert mod.delete(:t)
+    end
+  end
+
+  test "drop with duplicate bag" do
+    for {mod, args} <- @modules do
+      :t |> mod.new([:duplicate_bag | args]) |> mod.set(a: 1, b: 2, c: 3, a: 2)
+      assert mod.drop(:t, [:a, :b, :d]) |> mod.keys == [:c]
+      assert mod.get(:t, :a) == nil
+      assert mod.get(:t, :b) == nil
+      assert mod.get(:t, :c) == 3
+      assert mod.drop(:t, [:c]) |> mod.keys == []
+      assert mod.get(:t, :c) == nil
+      assert mod.drop(:t, [:d]) |> mod.keys == []
+      assert mod.delete(:t)
+    end
+  end
 
   test "fetch" do
     for {mod, args} <- @modules do
@@ -159,30 +187,30 @@ defmodule ExShards.API.ExtTest do
     end
   end
 
-  test "drop" do
+  test "take_and_drop" do
     for {mod, args} <- @modules do
       :t |> mod.new(args) |> mod.set(a: 1, b: 2, c: 3)
-      assert mod.drop(:t, [:a, :b, :d]) == %{a: 1, b: 2}
+      assert mod.take_and_drop(:t, [:a, :b, :d]) == %{a: 1, b: 2}
       assert mod.get(:t, :a) == nil
       assert mod.get(:t, :b) == nil
       assert mod.get(:t, :c) == 3
-      assert mod.drop(:t, [:c]) == %{c: 3}
+      assert mod.take_and_drop(:t, [:c]) == %{c: 3}
       assert mod.get(:t, :c) == nil
-      assert mod.drop(:t, [:d]) == %{}
+      assert mod.take_and_drop(:t, [:d]) == %{}
       assert mod.delete(:t)
     end
   end
 
-  test "drop with duplicate bag" do
+  test "take_and_drop with duplicate bag" do
     for {mod, args} <- @modules do
       :t |> mod.new([:duplicate_bag | args]) |> mod.set(a: 1, b: 2, c: 3, a: 2)
-      assert mod.drop(:t, [:a, :b, :d]) == %{a: [1, 2], b: 2}
+      assert mod.take_and_drop(:t, [:a, :b, :d]) == %{a: [1, 2], b: 2}
       assert mod.get(:t, :a) == nil
       assert mod.get(:t, :b) == nil
       assert mod.get(:t, :c) == 3
-      assert mod.drop(:t, [:c]) == %{c: 3}
+      assert mod.take_and_drop(:t, [:c]) == %{c: 3}
       assert mod.get(:t, :c) == nil
-      assert mod.drop(:t, [:d]) == %{}
+      assert mod.take_and_drop(:t, [:d]) == %{}
       assert mod.delete(:t)
     end
   end

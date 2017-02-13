@@ -3,7 +3,8 @@ defmodule ExShards.State do
   Shards State.
 
   This module overrides the original `shards_state` getter and setter
-  functions in order to make them more pipe-operator friendly.
+  functions in order to make them more Elixir-friendly – e.g.: take
+  advantage of pipe-operator.
 
   ## Examples
 
@@ -18,7 +19,7 @@ defmodule ExShards.State do
     * [Shards](https://github.com/cabol/shards/blob/master/src/shards_state.erl)
   """
 
-  use ExShards.API
+  use ExShards.Construct
 
   require Record
 
@@ -41,29 +42,29 @@ defmodule ExShards.State do
     pick_shard_fun: pick_fun,
     pick_node_fun: pick_fun])
 
-  construct :shards_state,
-    exclude: [
+  inject :shards_state,
+    except: [
       module: 2,
       n_shards: 2,
       pick_shard_fun: 2,
       pick_node_fun: 2]
 
-  @doc false
+  @spec module(t, module) :: t
   def module(state, module) do
     :shards_state.module(module, state)
   end
 
-  @doc false
+  @spec n_shards(t, integer) :: t
   def n_shards(state, n_shards) do
     :shards_state.n_shards(n_shards, state)
   end
 
-  @doc false
+  @spec pick_shard_fun(t, pick_fun) :: t
   def pick_shard_fun(state, pick_shard_fun) do
     :shards_state.pick_shard_fun(pick_shard_fun, state)
   end
 
-  @doc false
+  @spec pick_node_fun(t, pick_fun) :: t
   def pick_node_fun(state, pick_node_fun) do
     :shards_state.pick_node_fun(pick_node_fun, state)
   end

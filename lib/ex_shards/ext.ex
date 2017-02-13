@@ -1,4 +1,4 @@
-defmodule ExShards.API.Ext do
+defmodule ExShards.Ext do
   @moduledoc """
   This module extends the Shards API providing some extra functions.
 
@@ -43,15 +43,12 @@ defmodule ExShards.API.Ext do
   @doc false
   defmacro __using__(_opts) do
     quote do
-      @behaviour ExShards.API.Ext
+      @behaviour ExShards.Ext
 
       def drop(tab, keys, state \\ ExShards.State.new) do
-        Enum.reduce(keys, %{}, fn(key, acc) ->
-          case pop(tab, key, nil, state) do
-            nil -> acc
-            val -> Map.put(acc, key, val)
-          end
-        end)
+        #Enum.each(keys, fn(key) -> delete(tab, key, state) end)
+        Enum.each(keys, &(delete(tab, &1, state)))
+        tab
       end
 
       def fetch(tab, key, state \\ ExShards.State.new) do
@@ -118,7 +115,7 @@ defmodule ExShards.API.Ext do
 
       def keys(tab, state \\ ExShards.State.new) do
         ms = [{{:"$1", :_}, [], [:"$1"]}]
-        select(tab, ms)
+        select(tab, ms, state)
       end
 
       def pop(tab, key, default \\ nil, state \\ ExShards.State.new) do
@@ -148,6 +145,15 @@ defmodule ExShards.API.Ext do
         tab
       end
 
+      def take_and_drop(tab, keys, state \\ ExShards.State.new) do
+        Enum.reduce(keys, %{}, fn(key, acc) ->
+          case pop(tab, key, nil, state) do
+            nil -> acc
+            val -> Map.put(acc, key, val)
+          end
+        end)
+      end
+
       def update(tab, key, initial, fun, state \\ ExShards.State.new) when is_function(fun, 1) do
         case fetch(tab, key, state) do
           {:ok, val} -> update_elem(tab, key, {2, fun.(val)}, state)
@@ -169,7 +175,7 @@ defmodule ExShards.API.Ext do
 
       def values(tab, state \\ ExShards.State.new) do
         ms = [{{:_, :"$1"}, [], [:"$1"]}]
-        select(tab, ms)
+        select(tab, ms, state)
       end
     end
   end
@@ -180,8 +186,7 @@ defmodule ExShards.API.Ext do
   @type state :: ExShards.State.t
 
   @doc """
-  Drops the given `keys` from `tab` and returns a map with all dropped
-  key-value pairs.
+  Drops the given `keys` from `tab`.
 
   If `keys` contains keys that are not in `tab`, they're simply ignored.
 
@@ -189,11 +194,11 @@ defmodule ExShards.API.Ext do
 
       iex> ExShards.set(:mytab, a: 1, b: 2, a: 3, c: 4)
       iex> ExShards.drop(:mytab, [:a, :b, :e])
-      %{a: [1, 3], b: 2}
-      iex> ExShards.get(:mytab, :a)
-      nil
+      :mytab
+      iex> ExShards.keys(:mytab)
+      [:c]
   """
-  @callback drop(tab, Enumerable.t, state) :: map
+  @callback drop(tab, Enumerable.t, state) :: tab
 
   @doc """
   Fetches the value for a specific `key` in the given `tab`.
@@ -430,6 +435,22 @@ defmodule ExShards.API.Ext do
   @callback set(tab, tuple | [tuple], state) :: tab
 
   @doc """
+  Drops the given `keys` from `tab` and returns a map with all dropped
+  key-value pairs.
+
+  If `keys` contains keys that are not in `tab`, they're simply ignored.
+
+  ## Examples
+
+      iex> ExShards.set(:mytab, a: 1, b: 2, a: 3, c: 4)
+      iex> ExShards.take_and_drop(:mytab, [:a, :b, :e])
+      %{a: [1, 3], b: 2}
+      iex> ExShards.get(:mytab, :a)
+      nil
+  """
+  @callback take_and_drop(tab, Enumerable.t, state) :: map
+
+  @doc """
   Updates the `key` in `tab` with the given function.
 
   If `key` is present in `tab` with value `value`, `fun` is invoked with
@@ -441,10 +462,7 @@ defmodule ExShards.API.Ext do
 
   ## Examples
 
-      iex> :mytab
-      ...> |> ExShards.put(:a, 1)
-      ...> |> ExShards.update(:a, 13, &(&1 * 2))
-      ...> |> ExShards.get(:a)
+      iex> :mytab |> ExShards.put(:a, 1) |> ExShards.update(:a, 13, &(&1 * 2)) |> ExShards.get(:a)
       2
       iex> :mytab |> ExShards.update(:b, 11, &(&1 * 2)) |> ExShards.get(:b)
       11
@@ -462,10 +480,7 @@ defmodule ExShards.API.Ext do
 
   ## Examples
 
-      iex> :mytab
-      ...> |> ExShards.put(:a, 1)
-      ...> |> ExShards.update!(:a, &(&1 * 2))
-      ...> |> ExShards.get(:a)
+      iex> :mytab |> ExShards.put(:a, 1) |> ExShards.update!(:a, &(&1 * 2)) |> ExShards.get(:a)
       2
       iex> :mytab |> ExShards.update(:b, &(&1 * 2))
       ** (KeyError) key :b not found in: :mytab
@@ -480,10 +495,7 @@ defmodule ExShards.API.Ext do
 
   ## Examples
 
-      iex> :mytab
-      ...> |> ExShards.put(:a, 1)
-      ...> |> ExShards.update_elem(:a, {2, 11})
-      ...> |> ExShards.get(:a)
+      iex> :mytab |> ExShards.put(:a, 1) |> ExShards.update_elem(:a, {2, 11}) |> ExShards.get(:a)
       11
       iex> :mytab |> ExShards.update_elem(:b, {2, 22}) |> ExShards.get(:b)
       nil

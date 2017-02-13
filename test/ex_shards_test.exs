@@ -16,6 +16,7 @@ defmodule ExShardsTest do
     put_new: 3, put_new: 4,
     remove: 2, remove: 3,
     set: 2, set: 3,
+    take_and_drop: 2, take_and_drop: 3,
     update: 4, update: 5,
     update!: 3, update!: 4,
     update_elem: 3, update_elem: 4,

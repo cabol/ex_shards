@@ -8,62 +8,63 @@ defmodule ExShards do
   ## Examples
 
       # this is required to build match specs for select operations
-      > require Ex2ms
+      iex> require Ex2ms
 
       # create a table with default options
-      > ExShards.new :mytab
+      iex> ExShards.new :mytab
       :mytab
 
-      > ExShards.insert :mytab, [k1: 1, k2: 2, k3: 3]
+      iex> ExShards.insert :mytab, [k1: 1, k2: 2, k3: 3]
       true
 
-      > for k <- [:k1, :k2, :k3] do
+      iex> for k <- [:k1, :k2, :k3] do
       [{_, v}] = ExShards.lookup(:mytab, k)
       v
       end
       [1, 2, 3]
 
-      > ms = Ex2ms.fun do {_, v} -> v end
+      iex> ms = Ex2ms.fun do {_, v} -> v end
       [{{:_, :"$1"}, [], [:"$1"]}]
-      > ExShards.select :mytab, ms
+      iex> ExShards.select :mytab, ms
       [1, 2, 3]
 
-      > ExShards.delete :mytab, :k3
+      iex> ExShards.delete :mytab, :k3
       true
-      > ExShards.lookup :mytab, :k3
+      iex> ExShards.lookup :mytab, :k3
       []
 
       # let's create another table
-      > ExShards.new :mytab2, [{:n_shards, 4}]
+      iex> ExShards.new :mytab2, [{:n_shards, 4}]
       :mytab2
 
       # start the observer so you can see how shards behaves
-      > :observer.start
+      iex> :observer.start
       :ok
 
   ## Links:
 
     * [Shards](https://github.com/cabol/shards)
     * [API Reference](http://cabol.github.io/shards)
+    * `ExShards.Ext` – Extended API
   """
 
-  use ExShards.API
-
-  @type tab :: atom
-  @type key :: term
-  @type value :: term
-  @type state :: ExShards.State.t
+  use ExShards.Construct
 
   ## API
 
-  construct :shards, exclude_all: [:start, :stop], exclude: [new: 2]
+  inject :shards, except: [:start, :stop, new: 2]
 
   @doc false
   def new(tab, opts \\ []), do: :shards.new(tab, opts)
 
   ## Extended API
 
-  @spec drop(tab, Enumerable.t) :: map
+  @type tab :: atom
+  @type key :: term
+  @type value :: term
+  @type state :: ExShards.State.t
+
+  @spec drop(tab, Enumerable.t) :: tab
   def drop(tab, keys), do: call(tab, :drop, [tab, keys])
 
   @spec fetch(tab, key) :: {:ok, value} | :error
@@ -101,6 +102,9 @@ defmodule ExShards do
 
   @spec set(tab, tuple | [tuple]) :: tab
   def set(tab, obj_or_objs), do: call(tab, :set, [tab, obj_or_objs])
+
+  @spec take_and_drop(tab, Enumerable.t) :: map
+  def take_and_drop(tab, keys), do: call(tab, :take_and_drop, [tab, keys])
 
   @spec update(tab, key, value, (value -> value)) :: tab
   def update(tab, key, initial, fun), do: call(tab, :update, [tab, key, initial, fun])
