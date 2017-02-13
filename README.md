@@ -1,7 +1,7 @@
 <img src="http://38.media.tumblr.com/db32471b7c8870cbb0b2cc173af283bb/tumblr_inline_nm9x9u6u261rw7ney_540.gif" height="170" width="100%" />
 
 
-# ExShards
+# ExShards [![Build Status](https://travis-ci.org/cabol/ex_shards.svg?branch=master)](https://travis-ci.org/cabol/ex_shards)
 
 This is a wrapper on top of [ETS](http://erlang.org/doc/man/ets.html) and [Shards](https://github.com/cabol/shards).
 
