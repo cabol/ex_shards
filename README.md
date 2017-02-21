@@ -150,6 +150,13 @@ $ iex --name c@127.0.0.1 -S mix
 iex> ExShards.new :mytab, scope: :g, nodes: [:"b@127.0.0.1", :"c@127.0.0.1"]
 :mytab
 
+# or if you somehow have the nodes clustered already
+
+iex> ExShards.new :mytab, scope: :g, nodes: Node.list
+:mytab
+
+# then
+
 iex> ExShards.get_nodes :mytab
 [:"a@127.0.0.1", :"b@127.0.0.1", :"c@127.0.0.1"]
 ```
