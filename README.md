@@ -147,11 +147,11 @@ $ iex --name c@127.0.0.1 -S mix
 **2.** Create a table with global scope (`scope: :g`) on each node and then join them.
 
 ```elixir
-iex> ExShards.new :mytab, scope: :g, nodes: [:b@127.0.0.1, :c@127.0.0.1]
+iex> ExShards.new :mytab, scope: :g, nodes: [:"b@127.0.0.1", :"c@127.0.0.1"]
 :mytab
 
 iex> ExShards.get_nodes :mytab
-[:a@127.0.0.1, :b@127.0.0.1, :c@127.0.0.1]
+[:"a@127.0.0.1", :"b@127.0.0.1", :"c@127.0.0.1"]
 ```
 
 **3.** Now **ExShards** cluster is ready, let's do some basic operations:
