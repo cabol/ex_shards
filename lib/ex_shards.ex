@@ -88,7 +88,7 @@ defmodule ExShards do
   @spec keys(tab) :: [key]
   def keys(tab), do: call(tab, :keys, [tab])
 
-  @spec pop(tab, key, value) :: {tab, value | [value]}
+  @spec pop(tab, key, value) :: value | [value]
   def pop(tab, key, default \\ nil), do: call(tab, :pop, [tab, key, default])
 
   @spec put(tab, key, value) :: tab

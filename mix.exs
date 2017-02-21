@@ -15,7 +15,7 @@ defmodule ExShards.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :shards]]
+    [applications: [:shards]]
   end
 
   defp deps do
