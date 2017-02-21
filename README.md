@@ -129,19 +129,19 @@ Let's see how **ExShards** works in distributed fashion.
 Node `a`:
 
 ```
-$ iex --sname a@localhost -S mix
+$ iex --name a@localhost -S mix
 ```
 
 Node `b`:
 
 ```
-$ iex --sname b@localhost -S mix
+$ iex --name b@localhost -S mix
 ```
 
 Node `c`:
 
 ```
-$ iex --sname c@localhost -S mix
+$ iex --name c@localhost -S mix
 ```
 
 **2.** Create a table with global scope (`scope: :g`) on each node and then join them.
