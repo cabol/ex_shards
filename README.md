@@ -129,29 +129,36 @@ Let's see how **ExShards** works in distributed fashion.
 Node `a`:
 
 ```
-$ iex --sname a@localhost -S mix
+$ iex --name a@127.0.0.1 -S mix
 ```
 
 Node `b`:
 
 ```
-$ iex --sname b@localhost -S mix
+$ iex --name b@127.0.0.1 -S mix
 ```
 
 Node `c`:
 
 ```
-$ iex --sname c@localhost -S mix
+$ iex --name c@127.0.0.1 -S mix
 ```
 
 **2.** Create a table with global scope (`scope: :g`) on each node and then join them.
 
 ```elixir
-iex> ExShards.new :mytab, scope: :g, nodes: [:b@localhost, :c@localhost]
+iex> ExShards.new :mytab, scope: :g, nodes: [:"b@127.0.0.1", :"c@127.0.0.1"]
 :mytab
 
+# or if you somehow have the nodes clustered already
+
+iex> ExShards.new :mytab, scope: :g, nodes: Node.list
+:mytab
+
+# then
+
 iex> ExShards.get_nodes :mytab
-[:a@localhost, :b@localhost, :c@localhost]
+[:"a@127.0.0.1", :"b@127.0.0.1", :"c@127.0.0.1"]
 ```
 
 **3.** Now **ExShards** cluster is ready, let's do some basic operations:
