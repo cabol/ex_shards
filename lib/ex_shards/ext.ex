@@ -46,7 +46,6 @@ defmodule ExShards.Ext do
       @behaviour ExShards.Ext
 
       def drop(tab, keys, state \\ ExShards.State.new) do
-        #Enum.each(keys, fn(key) -> delete(tab, key, state) end)
         Enum.each(keys, &(delete(tab, &1, state)))
         tab
       end
@@ -277,7 +276,7 @@ defmodule ExShards.Ext do
   `pop(tab, key)`.
 
   The returned value is a tuple with the "get" value returned by
-  `fun` and a new map with the updated value under `key`.
+  `fun` and the new updated value under `key`.
 
   ## Examples
 
@@ -307,7 +306,7 @@ defmodule ExShards.Ext do
   Gets the value from `key` and updates it. Raises if there is no `key`.
 
   Behaves exactly like `get_and_update/3`, but raises a `KeyError` exception if
-  `key` is not present in `map`.
+  `key` is not present in `tab`.
 
   ## Examples
 
@@ -361,11 +360,11 @@ defmodule ExShards.Ext do
 
   Return possibilities:
 
-    * `{tab, value}` – If `key` is present in `tab` with value `value`.
-    * `{tab, [value]}` – In case of multiple matches with the key `key`.
+    * `value` – If `key` is present in `tab` with value `value`.
+    * `[value]` – In case of multiple matches with the key `key`.
       This behaviour is expected when the table is either a `:bag` or
       a `:duplicate_bag`.
-    * `{tab, default}` – If `key` is not present in `tab`.
+    * `default` – If `key` is not present in `tab`.
 
   ## Examples
 
