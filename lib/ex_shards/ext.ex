@@ -73,10 +73,11 @@ defmodule ExShards.Ext do
       end
 
       def get_and_update(tab, key, fun, state \\ ExShards.State.new) when is_function(fun, 1) do
-        current = case fetch(tab, key, state) do
-          {:ok, val} -> val
-          :error     -> nil
-        end
+        current =
+          case fetch(tab, key, state) do
+            {:ok, val} -> val
+            :error     -> nil
+          end
 
         case fun.(current) do
           {_, update} = rs ->

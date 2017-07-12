@@ -1,7 +1,6 @@
-<img src="http://38.media.tumblr.com/db32471b7c8870cbb0b2cc173af283bb/tumblr_inline_nm9x9u6u261rw7ney_540.gif" height="170" width="100%" />
+# ExShards
 
-
-# ExShards [![Build Status](https://travis-ci.org/cabol/ex_shards.svg?branch=master)](https://travis-ci.org/cabol/ex_shards)
+[![Build Status](https://travis-ci.org/cabol/ex_shards.svg?branch=master)](https://travis-ci.org/cabol/ex_shards)
 
 This is a wrapper on top of [ETS](http://erlang.org/doc/man/ets.html) and [Shards](https://github.com/cabol/shards).
 
@@ -224,8 +223,7 @@ iex> for k <- [:k1, :k2, :k3, :k4, :k5] do
 ## References
 
  * [ExShards API Reference](https://hexdocs.pm/ex_shards/api-reference.html): ExShards Docs.
- * [Shards](https://github.com/cabol/shards): Original Erlang project.
- * [Shards API Reference](http://cabol.github.io/shards): Shards API Reference.
+ * [Shards API Reference](https://hexdocs.pm/shards): Shards API Reference.
  * [Blog Post about Shards](http://cabol.github.io/posts/2016/04/14/sharding-support-for-ets.html).
 
 
