@@ -1,5 +1,16 @@
 # Change Log
 
+## [v0.2.1](https://github.com/cabol/ex_shards/tree/v0.2.1) (2017-07-12)
+[Full Changelog](https://github.com/cabol/ex_shards/compare/v0.2.0...v0.2.1)
+
+**Closed issues:**
+
+- spec suggests otherwise [\#7](https://github.com/cabol/ex_shards/issues/7)
+
+**Merged pull requests:**
+
+- Update README.md [\#6](https://github.com/cabol/ex_shards/pull/6) ([princemaple](https://github.com/princemaple))
+
 ## [v0.2.0](https://github.com/cabol/ex_shards/tree/v0.2.0) (2017-02-13)
 [Full Changelog](https://github.com/cabol/ex_shards/compare/v0.1.0...v0.2.0)
 
